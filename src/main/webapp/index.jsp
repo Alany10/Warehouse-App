@@ -1,13 +1,14 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Greeting Form</title>
 </head>
 <body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+<h2>Enter your name:</h2>
+<!-- Ett formulär som skickar en POST-begäran till WelcomeServlet -->
+<form action="welcome" method="post">
+    <input type="text" name="name" placeholder="Your name" />
+    <input type="submit" value="Submit" />
+</form>
 </body>
 </html>

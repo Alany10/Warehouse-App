@@ -2,27 +2,23 @@ package com.lab1;
 
 import java.io.*;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-@WebServlet(name = "helloServlet", value = "/hello-servlet")
+@WebServlet("/welcome")
 public class HelloServlet extends HttpServlet {
-    private String message;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Hämta namnet från formuläret (JSP)
+        String name = request.getParameter("name");
 
-    public void init() {
-        message = "Hello World!";
-    }
+        // Lagra namnet som en attribut och skicka det till JSP
+        request.setAttribute("name", name);
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
-
-        // Hello
-        PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<h1>" + message + "</h1>");
-        out.println("</body></html>");
-    }
-
-    public void destroy() {
+        // Vidarebefordra till JSP-sidan som visar hälsningsmeddelandet
+        RequestDispatcher dispatcher = request.getRequestDispatcher("greeting.jsp");
+        dispatcher.forward(request, response);
     }
 }
