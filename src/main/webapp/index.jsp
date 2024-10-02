@@ -4,11 +4,17 @@
     <title>Greeting Form</title>
 </head>
 <body>
-<h2>Enter your name:</h2>
+<h2>Enter your username and password:</h2>
 <!-- Ett formulär som skickar en POST-begäran till WelcomeServlet -->
-<form action="welcome" method="post">
-    <input type="text" name="name" placeholder="Your name" />
+<form action="login" method="post">
+    <input type="text" name="name" placeholder="Username" />
+    <input type="password" name="password" placeholder="Password" />
     <input type="submit" value="Submit" />
 </form>
+
+<% String errorMessage = (String) request.getAttribute("errorMessage");
+    if (errorMessage != null) { %>
+<p style="color:red;"><%= errorMessage %></p>
+<% } %>
 </body>
 </html>
