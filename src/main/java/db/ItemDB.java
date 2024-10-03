@@ -1,6 +1,8 @@
 package db;
 
+import bo.Category;
 import bo.Item;
+import bo.Role;
 import bo.User;
 
 import java.sql.*;
@@ -8,8 +10,8 @@ import java.util.ArrayList;
 
 public class ItemDB extends bo.Item{
 
-    private ItemDB(int id, String name, String description, int price, int balance) {
-        super(id, name, description, price, balance);
+    private ItemDB(int id, String name, String description, int price, int balance, Category category) {
+        super(id, name, description, price, balance, category);
     }
 
     public static ArrayList<Item> listAllItems() {
@@ -37,7 +39,8 @@ public class ItemDB extends bo.Item{
                 String description = resultSet.getString("description");
                 int price = resultSet.getInt("price");
                 int balance = resultSet.getInt("balance");
-                items.add(new ItemDB(id, name, description, price, balance));
+                Category category = Category.valueOf(resultSet.getString("category").toUpperCase());
+                items.add(new ItemDB(id, name, description, price, balance, category));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -91,9 +94,9 @@ public class ItemDB extends bo.Item{
                     String description = resultsetItem.getString("description");
                     int price = resultsetItem.getInt("price");
                     int balance = resultsetItem.getInt("balance");
-
+                    Category category = Category.valueOf(resultsetItem.getString("category").toUpperCase());
                     // Skapa ett nytt Item-objekt och lägg till det i listan
-                    Item item = new ItemDB(itemId, itemName, description, price, balance);
+                    Item item = new ItemDB(itemId, itemName, description, price, balance, category);
                     items.add(item);
                 }
 
@@ -143,7 +146,8 @@ public class ItemDB extends bo.Item{
                         resultSet.getString("name"),
                         resultSet.getString("description"),
                         resultSet.getInt("price"),
-                        resultSet.getInt("balance"));
+                        resultSet.getInt("balance"),
+                        Category.valueOf(resultSet.getString("category")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -190,5 +194,81 @@ public class ItemDB extends bo.Item{
             }
         }
     }
+
+    public static boolean addNewItem(String name, String description, int price, int quantity, Category category) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Anslut till databasen
+            connection = DBManager.getConnection();
+
+            // Förbered SQL-satsen för att lägga till en ny rad i item-tabellen
+            String sql = "INSERT INTO item (name, description, price, balance, category) VALUES (?, ?, ?, ?, ?)";
+
+            // Skapa en PreparedStatement
+            preparedStatement = connection.prepareStatement(sql);
+
+            // Ställ in parametrarna för frågan baserat på Item-objektets attribut
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, description);
+            preparedStatement.setInt(3, price);
+            preparedStatement.setInt(4, quantity);
+            preparedStatement.setString(5, category.name()); // Enum konverteras till sträng
+
+            // Utför INSERT-frågan och kontrollera om någon rad påverkades
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0; // Returnera true om objektet lades till framgångsrikt
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Returnera false om ett fel inträffar
+        } finally {
+            // Stäng resurser
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static boolean editItem(Item item) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Anslut till databasen
+            connection = DBManager.getConnection();
+
+            // Förbered SQL-satsen för att uppdatera en rad i item-tabellen
+            String sql = "UPDATE item SET name = ?, description = ?, price = ?, balance = ?, category = ? WHERE id = ?";
+
+            // Skapa en PreparedStatement
+            preparedStatement = connection.prepareStatement(sql);
+
+            // Ställ in parametrarna för frågan baserat på Item-objektets attribut
+            preparedStatement.setString(1, item.getName());
+            preparedStatement.setString(2, item.getDescription());
+            preparedStatement.setInt(3, item.getPrice());
+            preparedStatement.setInt(4, item.getBalance());
+            preparedStatement.setString(5, item.getCategory().name()); // Enum konverteras till sträng
+            preparedStatement.setInt(6, item.getId()); // Identifiera vilken rad som ska uppdateras
+
+            // Utför UPDATE-frågan och kontrollera om någon rad påverkades
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0; // Returnera true om objektet uppdaterades framgångsrikt
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Returnera false om ett fel inträffar
+        } finally {
+            // Stäng resurser
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }

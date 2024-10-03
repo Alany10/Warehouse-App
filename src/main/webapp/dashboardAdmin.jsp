@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Dashboard</title>
@@ -9,16 +10,17 @@
 <p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
 <p>Your role is: <strong><%= session.getAttribute("role") %></strong>!</p>
 
-<form action="addItem">
-    <input type="submit" value="Add Item" />
-</form>
-<form action="removeItem">
-    <input type="submit" value="Remove Item" />
-</form>
-<form action="showMyItems">
-    <input type="submit" value="Show Items" />
+<!-- Form för att lägga till ny artikel -->
+<form action="addNewItem" method="get">
+    <input type="submit" value="Add New Item" />
 </form>
 
-<a href="index.jsp">Logout</a> <!-- Länk för att logga ut, om det behövs -->
+<!-- Form för att redigera en artikel (kan justeras för att peka på korrekt servlet) -->
+<form action="pickEditItem" method="get">
+    <input type="submit" value="Edit Item" />
+</form>
+
+<!-- Länk för att logga ut -->
+<a href="index.jsp">Logout</a>
 </body>
 </html>

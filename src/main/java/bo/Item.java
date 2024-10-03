@@ -8,13 +8,15 @@ public class Item {
     private String description;
     private int price;
     private static int balance;
+    private Category category;
 
-    protected Item (int id, String name, String description, int price, int balance) {
+    protected Item (int id, String name, String description, int price, int balance, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         Item.balance = balance;
+        this.category = category;
     }
 
     public int getId() {
@@ -37,6 +39,10 @@ public class Item {
         return balance;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -56,22 +62,26 @@ public class Item {
         Item.balance = balance;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return id == item.id && price == item.price && Objects.equals(name, item.name) && Objects.equals(description, item.description);
+        return price == item.price && Objects.equals(name, item.name) && Objects.equals(description, item.description) && category == item.category;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price);
+        return Objects.hash(id, name, description, price, category);
     }
 
     @Override
     public String toString() {
-        return name + ", " + description + ", price=" + price;
+        return name + ", " + description + ", price=" + price + ", category=" + category;
 
     }
 }

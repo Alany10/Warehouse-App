@@ -4,6 +4,7 @@ import db.ItemDB;
 import db.UserDB;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserHandler {
 
@@ -79,7 +80,43 @@ public class UserHandler {
         return false;
     }
 
+    public static boolean addNewItem(String name, String description, int price, int quantity, Category category) {
+        Item item = new Item(0, name, description, price, quantity, category);
+        List<Item> items = getAllItems();
+
+        if (items.contains(item)){
+            return false;
+        }
+
+        if (ItemDB.addNewItem(name, description, price, quantity, category)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean editItem(int id, String name, String description, int price, int quantity, Category category) {
+        for (Item item : getAllItems()) {
+            if (item.getId() == id) {
+                ItemDB.editItem(new Item(id, name, description, price, quantity, category));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static User getUserByUsername(String username) {
         return UserDB.searchByUsername(username);
+    }
+
+    public static Item getItemById(int itemId) {
+        for (Item item : getAllItems()) {
+            if (item.getId() == itemId) {
+                return item;
+            }
+        }
+
+        return null;
     }
 }
