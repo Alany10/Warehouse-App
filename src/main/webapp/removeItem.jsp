@@ -3,39 +3,39 @@
 <%@ page import="java.util.List" %>
 <html>
 <head>
-    <title>Select Items</title>
+    <title>Remove Item</title>
 </head>
 <body>
-<h2>Select Item to Add</h2>
+<h2>Remove Item</h2>
 
 <p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
 
-<%-- Visa meddelanden --%>
 <%
     String message = request.getParameter("message");
     String error = request.getParameter("error");
+
     if (message != null) {
 %>
-<p style="color:green;"><%= message %></p>
+<p style="color: green;"><%= message %></p>
 <%
 } else if (error != null) {
 %>
-<p style="color:red;"><%= error %></p>
+<p style="color: red;"><%= error %></p>
 <%
     }
 %>
 
 <%
-    List<Item> items = (List<Item>) session.getAttribute("items");
+    List<Item> items = (List<Item>) session.getAttribute("myItems");
     if (items != null && !items.isEmpty()) {
 %>
 
-<form action="addItem" method="post">
+<form action="removeItem" method="post">
     <% for (Item item : items) { %>
     <input type="radio" name="itemId" value="<%= item.getId() %>" />
     <%= item.getName() %><br>
     <% } %>
-    <input type="submit" value="Add Selected Item" />
+    <input type="submit" value="Remove Selected Item" />
 </form>
 
 <%

@@ -7,7 +7,7 @@
 <h2>Enter your username and password:</h2>
 <!-- Ett formulär som skickar en POST-begäran till WelcomeServlet -->
 <form action="login" method="post">
-    <input type="text" name="name" placeholder="Username" />
+    <input type="text" name="username" placeholder="Username" />
     <input type="password" name="password" placeholder="Password" />
     <input type="submit" value="Submit" />
 </form>

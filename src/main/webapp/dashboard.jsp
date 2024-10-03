@@ -6,18 +6,18 @@
 <body>
 <h2>Dashboard</h2>
 
-<p>Welcome, <strong><%= session.getAttribute("name") %></strong>!</p>
+<p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
 
-<form action="addItem.jsp">
+<form action="addItem">
     <input type="submit" value="Add Item" />
 </form>
-<form action="removeItem.jsp">
+<form action="removeItem">
     <input type="submit" value="Remove Item" />
 </form>
-<form action="showItems.jsp">
+<form action="showMyItems">
     <input type="submit" value="Show Items" />
 </form>
 
-<a href="logout">Logout</a> <!-- Länk för att logga ut, om det behövs -->
+<a href="index.jsp">Logout</a> <!-- Länk för att logga ut, om det behövs -->
 </body>
 </html>

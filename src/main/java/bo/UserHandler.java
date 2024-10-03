@@ -40,8 +40,10 @@ public class UserHandler {
         return false;
     }
 
-    public static boolean removeItem(User user, Item item) {
-        if (UserDB.removeItem(user.getId(), item.getId())){
+    public static boolean removeItem(int userId, int itemId) {
+        if (UserDB.removeItem(userId, itemId)){
+            User user = UserDB.searchById(userId);
+            Item item = ItemDB.searchById(itemId);
             user.removeItem(item);
             return true;
         }
