@@ -1,15 +1,15 @@
 package db;
 
 import bo.Item;
+import bo.Role;
 import bo.User;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class UserDB extends bo.User{
 
-    private UserDB(int id, String username, String password) {
-        super(id, username, password);
+    private UserDB(int id, String username, String password, Role role) {
+        super(id, username, password, role);
     }
 
     public static User searchByUsername(String username) {
@@ -34,7 +34,11 @@ public class UserDB extends bo.User{
 
             // Hämta resultatet om det finns
             if (resultSet.next()) {
-                user = new UserDB(resultSet.getInt("id"), resultSet.getString("username"), resultSet.getString("password"));
+
+                user = new UserDB(resultSet.getInt("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        Role.valueOf(resultSet.getString("role").toUpperCase()));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -75,7 +79,8 @@ public class UserDB extends bo.User{
             if (resultSet.next()) {
                 user = new UserDB(resultSet.getInt("id"),
                         resultSet.getString("username"),
-                        resultSet.getString("password"));
+                        resultSet.getString("password"),
+                        Role.valueOf(resultSet.getString("role").toUpperCase()));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,14 +98,6 @@ public class UserDB extends bo.User{
     }
 
     public static boolean addItem(int userId, int itemId) {
-        User user = UserDB.searchById(userId);
-        Item item = ItemDB.searchById(itemId);
-
-        // Kontrollera om användaren eller varan inte finns
-        if (user == null || item == null) {
-            return false;
-        }
-
         // Deklarera resurser för stängning
         Connection connection = null;
         PreparedStatement preparedStatementCheck = null;
@@ -149,14 +146,6 @@ public class UserDB extends bo.User{
 
 
     public static boolean removeItem(int userId, int itemId) {
-        User user = UserDB.searchById(userId);
-        Item item = ItemDB.searchById(itemId);
-
-        // Kontrollera om användaren eller varan inte finns
-        if (user == null || item == null) {
-            return false;
-        }
-
         // Deklarera resurser för stängning
         Connection connection = null;
         PreparedStatement preparedStatementCheck = null;
@@ -196,7 +185,6 @@ public class UserDB extends bo.User{
                 if (resultSet != null) resultSet.close();
                 if (preparedStatementCheck != null) preparedStatementCheck.close();
                 if (preparedStatementDelete != null) preparedStatementDelete.close();
-                // connection.close(); // Gör inte detta om du använder en singleton
             } catch (SQLException e) {
                 e.printStackTrace();
             }

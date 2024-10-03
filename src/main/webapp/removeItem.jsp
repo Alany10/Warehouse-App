@@ -6,7 +6,7 @@
     <title>Remove Item</title>
 </head>
 <body>
-<h2>Remove Item</h2>
+<h2>Select item to remove</h2>
 
 <p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
 
@@ -46,6 +46,6 @@
     }
 %>
 
-<a href="dashboard.jsp">Back to Dashboard</a>
+<a href="dashboardCustomer.jsp">Back to Dashboard</a>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package ui;
 
+import bo.Role;
+import bo.User;
 import bo.UserHandler;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -15,16 +17,30 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Hämta namnet och lösenordet från formuläret (JSP)
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        Role role = Role.valueOf(request.getParameter("role"));
 
         // Kontrollera användarens uppgifter
-        if (UserHandler.Login(username, password)) {
+        if (UserHandler.Login(username, password, role)) {
             // Användaren är giltig, skicka välkomstmeddelande
             HttpSession session = request.getSession();
             session.setAttribute("username", username);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("dashboard.jsp");
-            dispatcher.forward(request, response);
+            session.setAttribute("role", role);
+
+            if (role.equals(Role.CUSTOMER)){
+                RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardCustomer.jsp");
+                dispatcher.forward(request, response);
+            }
+            else if (role.equals(Role.ADMIN)){
+                RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardAdmin.jsp");
+                dispatcher.forward(request, response);
+            }
+            else if (role.equals(Role.WAREHOUSE)){
+                RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardWareHouse.jsp");
+                dispatcher.forward(request, response);
+            }
         } else {
             // Användarnamn eller lösenord är felaktigt
             request.setAttribute("errorMessage", "Wrong username or password");

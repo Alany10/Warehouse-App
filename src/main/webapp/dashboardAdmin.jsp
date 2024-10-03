@@ -7,6 +7,7 @@
 <h2>Dashboard</h2>
 
 <p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
+<p>Your role is: <strong><%= session.getAttribute("role") %></strong>!</p>
 
 <form action="addItem">
     <input type="submit" value="Add Item" />

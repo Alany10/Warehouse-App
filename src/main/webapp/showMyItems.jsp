@@ -46,6 +46,6 @@
     }
 %>
 
-<a href="dashboard.jsp">Back to Dashboard</a>
+<a href="dashboardCustomer.jsp">Back to Dashboard</a>
 </body>
 </html>

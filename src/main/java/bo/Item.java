@@ -7,12 +7,14 @@ public class Item {
     private String name;
     private String description;
     private int price;
+    private static int balance;
 
-    protected Item (int id, String name, String description, int price) {
+    protected Item (int id, String name, String description, int price, int balance) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        Item.balance = balance;
     }
 
     public int getId() {
@@ -31,6 +33,10 @@ public class Item {
         return price;
     }
 
+    public int getBalance() {
+        return balance;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -41,6 +47,13 @@ public class Item {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public void setBalance(int balance) {
+        if (balance < 0){
+            throw new IllegalArgumentException("Balance cannot be negative");
+        }
+        Item.balance = balance;
     }
 
     @Override

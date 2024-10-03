@@ -3,7 +3,7 @@
 <%@ page import="java.util.List" %>
 <html>
 <head>
-    <title>Select Items</title>
+    <title>Add item</title>
 </head>
 <body>
 <h2>Select Item to Add</h2>
@@ -46,6 +46,6 @@
     }
 %>
 
-<a href="dashboard.jsp">Back to Dashboard</a>
+<a href="dashboardCustomer.jsp">Back to Dashboard</a>
 </body>
 </html>

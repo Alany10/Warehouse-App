@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class ItemDB extends bo.Item{
 
-    private ItemDB(int id, String name, String description, int price) {
-        super(id, name, description, price);
+    private ItemDB(int id, String name, String description, int price, int balance) {
+        super(id, name, description, price, balance);
     }
 
     public static ArrayList<Item> listAllItems() {
@@ -36,7 +36,8 @@ public class ItemDB extends bo.Item{
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 int price = resultSet.getInt("price");
-                items.add(new ItemDB(id, name, description, price));
+                int balance = resultSet.getInt("balance");
+                items.add(new ItemDB(id, name, description, price, balance));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -54,16 +55,8 @@ public class ItemDB extends bo.Item{
     }
 
 
-    public static ArrayList<Item> searchItemByUsername(String username) {
+    public static ArrayList<Item> searchItemByUsername(String username, int userId) {
         ArrayList<Item> items = new ArrayList<>();
-
-        User user = UserDB.searchByUsername(username);
-
-        if (user == null) {
-            return items;
-        }
-
-        int userId = user.getId();
 
         // Deklarera resurser för stängning
         Connection connection = null;
@@ -97,9 +90,10 @@ public class ItemDB extends bo.Item{
                     String itemName = resultsetItem.getString("name");
                     String description = resultsetItem.getString("description");
                     int price = resultsetItem.getInt("price");
+                    int balance = resultsetItem.getInt("balance");
 
                     // Skapa ett nytt Item-objekt och lägg till det i listan
-                    Item item = new ItemDB(itemId, itemName, description, price);
+                    Item item = new ItemDB(itemId, itemName, description, price, balance);
                     items.add(item);
                 }
 
@@ -148,7 +142,8 @@ public class ItemDB extends bo.Item{
                 item = new ItemDB(resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getString("description"),
-                        resultSet.getInt("price"));
+                        resultSet.getInt("price"),
+                        resultSet.getInt("balance"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -164,4 +159,36 @@ public class ItemDB extends bo.Item{
 
         return item; // Returnera användaren eller null om inte hittad
     }
+
+    public static boolean updateBalance(int itemId, int balance) {
+        // Deklarera resurser för stängning
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Anslutning till databasen
+            connection = DBManager.getConnection();
+
+            // Förbered SQL-frågan för att uppdatera balance
+            String sql = "UPDATE item SET balance = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, balance); // Sätt den nya balansen
+            preparedStatement.setInt(2, itemId); // Sätt itemId för att identifiera rätt rad
+
+            // Utför uppdateringen och kolla om någon rad påverkas
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0; // Returnera true om uppdateringen lyckades
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Returnera false om ett fel inträffar
+        } finally {
+            // Stäng resurser
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

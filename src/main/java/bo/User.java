@@ -9,12 +9,14 @@ public class User {
     private String username;
     private String password;
     private final ArrayList<Item> shoppingBag;
+    private Role role;
 
-    protected User(int id, String username, String password) {
+    protected User(int id, String username, String password, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.shoppingBag = new ArrayList<>();
+        this.role = role;
     }
 
     public int getId() {
@@ -29,6 +31,14 @@ public class User {
         return password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public ArrayList<Item> getShoppingBag() {
+        return new ArrayList<>(shoppingBag);
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -37,8 +47,8 @@ public class User {
         this.password = password;
     }
 
-    public ArrayList<Item> getShoppingBag() {
-        return new ArrayList<>(shoppingBag);
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public boolean addItem(Item item) {
@@ -62,16 +72,16 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password);
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(shoppingBag, user.shoppingBag) && role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password);
+        return Objects.hash(id, username, password, shoppingBag, role);
     }
 
     @Override
     public String toString() {
-        return username;
+        return username + ", " + role;
     }
 }
