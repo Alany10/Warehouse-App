@@ -5,6 +5,9 @@ import bo.Role;
 import bo.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class UserDB extends bo.User{
 
@@ -189,6 +192,93 @@ public class UserDB extends bo.User{
                 e.printStackTrace();
             }
         }
+    }
+
+    public static List<User> getAllCustomersWithCarts() {
+        List<User> customersWithCarts = new ArrayList<>(); // Lista för att lagra kunder och deras korgar
+        HashMap<Integer, User> customerMap = new HashMap<>(); // HashMap för att hantera kunder och undvika dubbletter
+        Connection connection = null; // Håll en referens till anslutningen
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Anslutning till databasen via singleton
+            connection = DBManager.getConnection();
+
+            // Steg 1: Hämta alla kunder
+            String sqlCustomers = "SELECT id, username, role FROM user WHERE role = ?";
+            preparedStatement = connection.prepareStatement(sqlCustomers);
+            preparedStatement.setString(1, Role.CUSTOMER.name()); // Sätta rollen till CUSTOMER
+            resultSet = preparedStatement.executeQuery();
+
+            // Skapa kunder och lagra dem i HashMap
+            while (resultSet.next()) {
+                int userId = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                Role role = Role.valueOf(resultSet.getString("role")); // Hämta rollen
+                User user = new UserDB(userId, username, null, role);
+                customerMap.put(userId, user);
+                customersWithCarts.add(user); // Lägg till kund i listan
+            }
+
+            // Steg 2: Hämta artiklar för varje kund
+            for (User customer : customersWithCarts) {
+                List<Item> items = getItemsForUser(customer.getId(), connection);
+                for (Item item : items) {
+                    customer.addItem(item); // Lägg till artiklar i kundens korg
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Stäng resurser för ResultSet och PreparedStatement
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return customersWithCarts; // Returnera lista över kunder med korgar
+    }
+
+    // Hjälpmetod för att hämta artiklar för en specifik kund
+    private static List<Item> getItemsForUser(int userId, Connection connection) {
+        List<Item> items = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Hämta artiklar kopplade till kunden
+            String sqlItems = "SELECT i.id, i.name FROM item i " +
+                    "JOIN user_item ui ON i.id = ui.item_id WHERE ui.user_id = ?";
+            preparedStatement = connection.prepareStatement(sqlItems);
+            preparedStatement.setInt(1, userId);
+            resultSet = preparedStatement.executeQuery();
+
+            // Skapa Item-objekt och lägg till i listan
+            while (resultSet.next()) {
+                int itemId = resultSet.getInt("id");
+                String itemName = resultSet.getString("name");
+                Item item = new ItemDB(itemId, itemName,null,0,0,null); // Anta att Item har en konstruktor som tar id och namn
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Stäng resurser för ResultSet och PreparedStatement
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return items; // Returnera listan med artiklar
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ItemDB extends bo.Item{
 
-    private ItemDB(int id, String name, String description, int price, int balance, Category category) {
+    protected ItemDB(int id, String name, String description, int price, int balance, Category category) {
         super(id, name, description, price, balance, category);
     }
 

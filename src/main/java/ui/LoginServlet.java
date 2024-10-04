@@ -1,6 +1,7 @@
 package ui;
 
 import bo.Role;
+import bo.ShoppingBagHandler;
 import bo.User;
 import bo.UserHandler;
 import jakarta.servlet.RequestDispatcher;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -38,7 +40,12 @@ public class LoginServlet extends HttpServlet {
                 dispatcher.forward(request, response);
             }
             else if (role.equals(Role.WAREHOUSE)){
-                RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardWareHouse.jsp");
+
+                List<User> customersWithCarts = ShoppingBagHandler.getAllCustomersWithCarts();
+                System.out.println("Kunder med korgar: " + (customersWithCarts != null ? customersWithCarts.size() : "null"));
+                session.setAttribute("customersWithCarts", customersWithCarts);
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardWarehouse.jsp");
                 dispatcher.forward(request, response);
             }
         } else {
