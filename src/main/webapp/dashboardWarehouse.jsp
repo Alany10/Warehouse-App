@@ -12,9 +12,11 @@
 <p>Welcome, <strong><%= session.getAttribute("username") %></strong>!</p>
 
 <%
-    String message = request.getParameter("message");
-    String error = request.getParameter("error");
+    // Hämta meddelande och fel från request
+    String message = request.getAttribute("message") != null ? request.getAttribute("message").toString() : null;
+    String error = request.getAttribute("error") != null ? request.getAttribute("error").toString() : null;
 
+    // Visa meddelande om det finns
     if (message != null) {
 %>
 <p style="color: green;"><%= message %></p>
@@ -27,6 +29,7 @@
 %>
 
 <%
+    // Hämta den uppdaterade listan över kunder med korgar från sessionen
     List<User> customersWithCarts = (List<User>) session.getAttribute("customersWithCarts");
     if (customersWithCarts != null && !customersWithCarts.isEmpty()) {
 %>
@@ -48,7 +51,7 @@
             </ul>
         </td>
         <td>
-            <form action="selectCart" method="post">
+            <form action="packOrder" method="post">
                 <input type="hidden" name="customerId" value="<%= customer.getId() %>">
                 <input type="submit" value="Done">
             </form>

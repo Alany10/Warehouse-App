@@ -67,6 +67,11 @@ public class User {
         return false;
     }
 
+    public boolean fulfillOrder() {
+        shoppingBag.clear();
+        return true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

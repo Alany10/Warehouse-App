@@ -119,4 +119,32 @@ public class UserHandler {
 
         return null;
     }
+
+    public static List<User> getAllCustomersWithCarts() {
+        List <User> customers = UserDB.getAllCustomers();
+        List<User> customersWithCharts = new ArrayList<>();
+
+        for (User user: customers){
+            if (!user.getShoppingBag().isEmpty()){
+                customersWithCharts.add(user);
+            }
+        }
+
+        return customersWithCharts;
+    }
+
+    public static boolean packOrder(int userId) {
+        User user = UserDB.searchById(userId);
+
+        if (user == null) {
+            return false;
+        }
+
+        if (UserDB.packOrder(userId)){
+            user.fulfillOrder();
+            return true;
+        }
+
+        return false;
+    }
 }

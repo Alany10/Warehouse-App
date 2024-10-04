@@ -140,7 +140,6 @@ public class UserDB extends bo.User{
                 if (resultSet != null) resultSet.close();
                 if (preparedStatementCheck != null) preparedStatementCheck.close();
                 if (preparedStatementInsert != null) preparedStatementInsert.close();
-                // connection.close(); // Gör inte detta om du använder en singleton
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -194,58 +193,8 @@ public class UserDB extends bo.User{
         }
     }
 
-    public static List<User> getAllCustomersWithCarts() {
-        List<User> customersWithCarts = new ArrayList<>(); // Lista för att lagra kunder och deras korgar
-        HashMap<Integer, User> customerMap = new HashMap<>(); // HashMap för att hantera kunder och undvika dubbletter
-        Connection connection = null; // Håll en referens till anslutningen
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            // Anslutning till databasen via singleton
-            connection = DBManager.getConnection();
-
-            // Steg 1: Hämta alla kunder
-            String sqlCustomers = "SELECT id, username, role FROM user WHERE role = ?";
-            preparedStatement = connection.prepareStatement(sqlCustomers);
-            preparedStatement.setString(1, Role.CUSTOMER.name()); // Sätta rollen till CUSTOMER
-            resultSet = preparedStatement.executeQuery();
-
-            // Skapa kunder och lagra dem i HashMap
-            while (resultSet.next()) {
-                int userId = resultSet.getInt("id");
-                String username = resultSet.getString("username");
-                Role role = Role.valueOf(resultSet.getString("role")); // Hämta rollen
-                User user = new UserDB(userId, username, null, role);
-                customerMap.put(userId, user);
-                customersWithCarts.add(user); // Lägg till kund i listan
-            }
-
-            // Steg 2: Hämta artiklar för varje kund
-            for (User customer : customersWithCarts) {
-                List<Item> items = getItemsForUser(customer.getId(), connection);
-                for (Item item : items) {
-                    customer.addItem(item); // Lägg till artiklar i kundens korg
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // Stäng resurser för ResultSet och PreparedStatement
-            try {
-                if (resultSet != null) resultSet.close();
-                if (preparedStatement != null) preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return customersWithCarts; // Returnera lista över kunder med korgar
-    }
-
     // Hjälpmetod för att hämta artiklar för en specifik kund
-    private static List<Item> getItemsForUser(int userId, Connection connection) {
+    private static List<Item> getItemsForCustomer(int userId, Connection connection) {
         List<Item> items = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -279,6 +228,99 @@ public class UserDB extends bo.User{
         }
 
         return items; // Returnera listan med artiklar
+    }
+
+    public static List<User> getAllCustomers() {
+        List<User> customers = new ArrayList<>(); // Lista för att lagra kunder
+        Connection connection = null; // Håll en referens till anslutningen
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Anslutning till databasen via singleton
+            connection = DBManager.getConnection();
+
+            // Steg 1: Hämta alla kunder
+            String sqlCustomers = "SELECT id, username, role FROM user WHERE role = ?";
+            preparedStatement = connection.prepareStatement(sqlCustomers);
+            preparedStatement.setString(1, Role.CUSTOMER.name()); // Sätta rollen till CUSTOMER
+            resultSet = preparedStatement.executeQuery();
+
+            // Skapa kunder och lagra dem i HashMap
+            while (resultSet.next()) {
+                int userId = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                Role role = Role.valueOf(resultSet.getString("role")); // Hämta rollen
+                User user = new UserDB(userId, username, null, role);
+                customers.add(user); // Lägg till kund i listan
+            }
+
+            // Steg 2: Hämta artiklar för varje kund
+            for (User customer : customers) {
+                List<Item> items = getItemsForCustomer(customer.getId(), connection);
+                for (Item item : items) {
+                    customer.addItem(item); // Lägg till artiklar i kundens korg
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Stäng resurser för ResultSet och PreparedStatement
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return customers; // Returnera lista över kunder med korgar
+    }
+
+    public static boolean packOrder(int userId) {
+        // Variabel för att spåra om operationen lyckades
+        boolean isSuccess = false;
+
+        // JDBC-variabler
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Anslutning till databasen via din DBManager
+            connection = DBManager.getConnection();
+
+            // SQL-frågan för att ta bort alla relationer för den angivna userId
+            String sql = "DELETE FROM user_item WHERE user_id = ?";
+
+            // Förbered PreparedStatement
+            preparedStatement = connection.prepareStatement(sql);
+
+            // Sätt in userId i SQL-frågan
+            preparedStatement.setInt(1, userId);
+
+            // Exekvera DELETE-frågan och få antalet påverkade rader
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Om rader togs bort, markera operationen som lyckad
+            if (rowsAffected > 0) {
+                isSuccess = true;
+            }
+
+        } catch (SQLException e) {
+            // Hantera SQL-fel
+            e.printStackTrace();
+        } finally {
+            // Stäng PreparedStatement och frigör resurser
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Returnera om operationen lyckades eller ej
+        return isSuccess;
     }
 
 }

@@ -1,7 +1,6 @@
 package ui;
 
 import bo.Role;
-import bo.ShoppingBagHandler;
 import bo.User;
 import bo.UserHandler;
 import jakarta.servlet.RequestDispatcher;
@@ -40,9 +39,7 @@ public class LoginServlet extends HttpServlet {
                 dispatcher.forward(request, response);
             }
             else if (role.equals(Role.WAREHOUSE)){
-
-                List<User> customersWithCarts = ShoppingBagHandler.getAllCustomersWithCarts();
-                System.out.println("Kunder med korgar: " + (customersWithCarts != null ? customersWithCarts.size() : "null"));
+                List<User> customersWithCarts = UserHandler.getAllCustomersWithCarts();
                 session.setAttribute("customersWithCarts", customersWithCarts);
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("dashboardWarehouse.jsp");
