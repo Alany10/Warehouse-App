@@ -38,7 +38,7 @@
     <tr>
         <th>Name</th>
         <th>Items</th>
-        <th>Choose</th>
+        <th>Pack</th>
     </tr>
     <% for (User customer : customersWithCarts) { %>
     <tr>

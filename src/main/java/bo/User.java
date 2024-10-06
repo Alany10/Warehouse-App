@@ -1,6 +1,7 @@
 package bo;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 public class User {
@@ -52,9 +53,6 @@ public class User {
     }
 
     public boolean addItem(Item item) {
-        if (shoppingBag.contains(item)) {
-            return false;
-        }
         shoppingBag.add(item);
         return true;
     }
@@ -87,6 +85,6 @@ public class User {
 
     @Override
     public String toString() {
-        return username + ", " + role;
+        return "<b>" + username + "</b>" +  ", " + role.toString().toLowerCase();
     }
 }

@@ -2,8 +2,6 @@ package db;
 
 import bo.Category;
 import bo.Item;
-import bo.Role;
-import bo.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class ItemDB extends bo.Item{
     }
 
 
-    public static ArrayList<Item> searchItemByUsername(String username, int userId) {
+    public static ArrayList<Item> searchItemByUsername(int userId) {
         ArrayList<Item> items = new ArrayList<>();
 
         // Deklarera resurser för stängning
@@ -269,6 +267,5 @@ public class ItemDB extends bo.Item{
             }
         }
     }
-
 
 }

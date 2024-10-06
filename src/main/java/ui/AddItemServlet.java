@@ -53,7 +53,7 @@ public class AddItemServlet extends HttpServlet {
         if (success) {
             response.sendRedirect("addItem.jsp?message=Item added successfully");
         } else {
-            response.sendRedirect("addItem.jsp?error=Could not add item");
+            response.sendRedirect("addItem.jsp?error=Item already in shopping bag");
         }
     }
 

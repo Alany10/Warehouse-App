@@ -35,7 +35,7 @@
     <label>
         <input type="radio" name="itemId" value="<%= item.getId() %>" />
     </label>
-    <%= item.getName() %><br>
+    <%= item.toString() %><br>
     <% } %>
     <input type="submit" value="Edit Selected Item" />
 </form>

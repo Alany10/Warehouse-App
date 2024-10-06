@@ -33,7 +33,7 @@
 <form action="removeItem" method="post">
     <% for (Item item : items) { %>
     <input type="radio" name="itemId" value="<%= item.getId() %>" />
-    <%= item.getName() %><br>
+    <%= item.toString() %><br>
     <% } %>
     <input type="submit" value="Remove Selected Item" />
 </form>

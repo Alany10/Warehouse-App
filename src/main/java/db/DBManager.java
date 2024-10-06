@@ -2,7 +2,6 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class DBManager {
 
@@ -16,7 +15,6 @@ public class DBManager {
         }
         return instance;
     }
-
 
     private DBManager() {
         try {

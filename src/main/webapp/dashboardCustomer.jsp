@@ -16,7 +16,7 @@
     <input type="submit" value="Remove Item" />
 </form>
 <form action="showMyItems">
-    <input type="submit" value="Show Items" />
+    <input type="submit" value="Show Your Items" />
 </form>
 
 <a href="index.jsp">Logout</a> <!-- Länk för att logga ut, om det behövs -->

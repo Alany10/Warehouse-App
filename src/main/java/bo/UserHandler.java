@@ -26,7 +26,7 @@ public class UserHandler {
             return new ArrayList<>();
         }
 
-        ArrayList<Item> myItems = ItemDB.searchItemByUsername(username, user.getId());
+        ArrayList<Item> myItems = ItemDB.searchItemByUsername(user.getId());
 
         return myItems;
     }
@@ -46,11 +46,17 @@ public class UserHandler {
             return false;
         }
 
+        // Kontrollera om varan finns i lager
         if (item.getBalance() < 1){
             return false;
         }
 
+        // Kontrollera om användaren redan har varan
+        if (user.getShoppingBag().contains(item)){
+            return false;
+        }
 
+        // Om databasen lyckades lägga till varan i relationstabellen
         if (UserDB.addItem(userId, itemId)){
             user.addItem(item);
             item.setBalance(item.getBalance() - 1);
@@ -67,6 +73,11 @@ public class UserHandler {
 
         // Kontrollera om användaren eller varan inte finns
         if (user == null || item == null) {
+            return false;
+        }
+
+        // Kontrollera om användaren ens har varan.
+        if (!user.getShoppingBag().contains(item)){
             return false;
         }
 

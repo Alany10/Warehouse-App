@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
             }
         } else {
             // Användarnamn eller lösenord är felaktigt
-            request.setAttribute("errorMessage", "Wrong username or password");
+            request.setAttribute("errorMessage", "Wrong username, password or role");
             RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp"); // Återgå till formuläret
             dispatcher.forward(request, response);
         }

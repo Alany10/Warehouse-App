@@ -81,7 +81,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return name + ", " + description + ", price=" + price + ", category=" + category;
-
+        return "<b>" + name + "</b>" + ", " + description + ", " + category.toString().toLowerCase() + ", price: " + price;
     }
 }

@@ -6,7 +6,6 @@ import bo.User;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class UserDB extends bo.User{
@@ -111,19 +110,7 @@ public class UserDB extends bo.User{
             // Anslutning till databasen
             connection = DBManager.getConnection();
 
-            // Kontrollera om relationen redan finns
-            String sqlCheck = "SELECT COUNT(*) FROM user_item WHERE user_id = ? AND item_id = ?";
-            preparedStatementCheck = connection.prepareStatement(sqlCheck);
-            preparedStatementCheck.setInt(1, userId);
-            preparedStatementCheck.setInt(2, itemId);
-            resultSet = preparedStatementCheck.executeQuery();
-
-            // Om relationen redan finns, returnera false
-            if (resultSet.next() && resultSet.getInt(1) > 0) {
-                return false; // Relation finns
-            }
-
-            // Om relationen inte finns, lägg till den
+            // Lägg till
             String sqlInsert = "INSERT INTO user_item (user_id, item_id) VALUES (?, ?)";
             preparedStatementInsert = connection.prepareStatement(sqlInsert);
             preparedStatementInsert.setInt(1, userId);
@@ -158,18 +145,6 @@ public class UserDB extends bo.User{
             // Anslutning till databasen
             connection = DBManager.getConnection();
 
-            // Kontrollera om relationen finns
-            String sqlCheck = "SELECT COUNT(*) FROM user_item WHERE user_id = ? AND item_id = ?";
-            preparedStatementCheck = connection.prepareStatement(sqlCheck);
-            preparedStatementCheck.setInt(1, userId);
-            preparedStatementCheck.setInt(2, itemId);
-            resultSet = preparedStatementCheck.executeQuery();
-
-            // Om relationen inte finns, returnera false
-            if (resultSet.next() && resultSet.getInt(1) == 0) {
-                return false; // Relation finns inte
-            }
-
             // Om relationen finns, ta bort den
             String sqlDelete = "DELETE FROM user_item WHERE user_id = ? AND item_id = ?";
             preparedStatementDelete = connection.prepareStatement(sqlDelete);
@@ -191,43 +166,6 @@ public class UserDB extends bo.User{
                 e.printStackTrace();
             }
         }
-    }
-
-    // Hjälpmetod för att hämta artiklar för en specifik kund
-    private static List<Item> getItemsForCustomer(int userId, Connection connection) {
-        List<Item> items = new ArrayList<>();
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            // Hämta artiklar kopplade till kunden
-            String sqlItems = "SELECT i.id, i.name FROM item i " +
-                    "JOIN user_item ui ON i.id = ui.item_id WHERE ui.user_id = ?";
-            preparedStatement = connection.prepareStatement(sqlItems);
-            preparedStatement.setInt(1, userId);
-            resultSet = preparedStatement.executeQuery();
-
-            // Skapa Item-objekt och lägg till i listan
-            while (resultSet.next()) {
-                int itemId = resultSet.getInt("id");
-                String itemName = resultSet.getString("name");
-                Item item = new ItemDB(itemId, itemName,null,0,0,null); // Anta att Item har en konstruktor som tar id och namn
-                items.add(item);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // Stäng resurser för ResultSet och PreparedStatement
-            try {
-                if (resultSet != null) resultSet.close();
-                if (preparedStatement != null) preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return items; // Returnera listan med artiklar
     }
 
     public static List<User> getAllCustomers() {
@@ -276,6 +214,43 @@ public class UserDB extends bo.User{
         }
 
         return customers; // Returnera lista över kunder med korgar
+    }
+
+    // Hjälpmetod för att hämta artiklar för en specifik kund
+    private static List<Item> getItemsForCustomer(int userId, Connection connection) {
+        List<Item> items = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Hämta artiklar kopplade till kunden
+            String sqlItems = "SELECT i.id, i.name FROM item i " +
+                    "JOIN user_item ui ON i.id = ui.item_id WHERE ui.user_id = ?";
+            preparedStatement = connection.prepareStatement(sqlItems);
+            preparedStatement.setInt(1, userId);
+            resultSet = preparedStatement.executeQuery();
+
+            // Skapa Item-objekt och lägg till i listan
+            while (resultSet.next()) {
+                int itemId = resultSet.getInt("id");
+                String itemName = resultSet.getString("name");
+                Item item = new ItemDB(itemId, itemName,null,0,0,null); // Anta att Item har en konstruktor som tar id och namn
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Stäng resurser för ResultSet och PreparedStatement
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return items; // Returnera listan med artiklar
     }
 
     public static boolean packOrder(int userId) {
