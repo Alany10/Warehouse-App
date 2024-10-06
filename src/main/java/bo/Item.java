@@ -76,7 +76,7 @@ public class Item {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, category);
+        return Objects.hash(name, description, price, category);
     }
 
     @Override

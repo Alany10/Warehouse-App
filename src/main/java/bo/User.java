@@ -80,7 +80,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, shoppingBag, role);
+        return Objects.hash(username, password, role);
     }
 
     @Override

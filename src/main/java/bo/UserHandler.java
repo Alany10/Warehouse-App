@@ -76,11 +76,6 @@ public class UserHandler {
             return false;
         }
 
-        // Kontrollera om användaren ens har varan.
-        if (!user.getShoppingBag().contains(item)){
-            return false;
-        }
-
         if (UserDB.removeItem(userId, itemId)){
             user.removeItem(item);
             item.setBalance(item.getBalance() + 1);
@@ -92,7 +87,7 @@ public class UserHandler {
     }
 
     public static boolean addNewItem(String name, String description, int price, int quantity, Category category) {
-        Item item = new Item(0, name, description, price, quantity, category);
+        Item item = new Item(Integer.MAX_VALUE, name, description, price, quantity, category);
         List<Item> items = getAllItems();
 
         if (items.contains(item)){

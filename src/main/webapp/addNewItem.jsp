@@ -24,7 +24,7 @@
     <select id="category" name="category" required>
         <option value="COMPUTER">Computer</option>
         <option value="MOBILE">Mobile</option>
-        <option value="ACCESSORIES">Accessories</option>
+        <option value="ACCESSORY">Accessory</option>
         <option value="TV">TV</option>
         <option value="HEADPHONE">Headphone</option>
     </select><br><br>

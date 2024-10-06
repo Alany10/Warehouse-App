@@ -49,7 +49,7 @@
     <select id="category" name="category" required>
         <option value="COMPUTER" <%= session.getAttribute("category")  == Category.COMPUTER? "selected" : "" %>>Computer</option>
         <option value="MOBILE" <%= session.getAttribute("category") == Category.MOBILE ? "selected" : "" %>>Mobile</option>
-        <option value="ACCESSORY" <%= session.getAttribute("category") == Category.ACCESSORIES ? "selected" : "" %>>Accessory</option>
+        <option value="ACCESSORY" <%= session.getAttribute("category") == Category.ACCESSORY ? "selected" : "" %>>Accessory</option>
         <option value="TV" <%= session.getAttribute("category") == Category.TV ? "selected" : "" %>>TV</option>
         <option value="HEADPHONE" <%= session.getAttribute("category") == Category.HEADPHONE ? "selected" : "" %>>Headphone</option>
     </select><br><br>
